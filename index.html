@@ -2,65 +2,65 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Atube — Material Design</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atube — Premium Video Host</title>
     <style>
         :root {
-            --surface: #1a1c1e;
-            --on-surface: #e2e2e6;
-            --primary: #d0bcff;
-            --error: #ffb4ab;
+            --m3-surface: #1c1b1f;
+            --m3-primary: #d0bcff;
+            --m3-on-surface: #e6e1e5;
+            --m3-variant: #49454f;
+            --glass: rgba(28, 27, 31, 0.7);
         }
 
         body {
-            background-color: #0b0e11;
-            color: var(--on-surface);
-            font-family: 'Segoe UI Variable', 'Segoe UI', sans-serif;
+            background: #0f0f0f;
+            color: var(--m3-on-surface);
+            font-family: 'Segoe UI Variable Display', 'Segoe UI', sans-serif;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            overflow-x: hidden;
         }
 
-        /* Шапка в стиле Windows 11 (Mica effect) */
+        /* Mica Effect & Blur */
         header {
-            width: 100%;
-            padding: 12px 0;
-            background: rgba(26, 28, 30, 0.8);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-container {
-            width: 100%;
-            max-width: 720px;
+            background: var(--glass);
+            backdrop-filter: blur(25px) saturate(160%);
+            -webkit-backdrop-filter: blur(25px) saturate(160%);
+            padding: 12px 24px;
             display: flex;
             align-items: center;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 4px 16px;
-            transition: 0.2s;
-        }
-
-        .search-container:focus-within {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(208, 188, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            animation: slideDown 0.6s ease;
         }
 
         .logo {
-            position: absolute;
-            left: 24px;
             color: #ff0000;
-            font-size: 22px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
             letter-spacing: -1px;
+            margin-right: 40px;
+            cursor: pointer;
+        }
+
+        .search-area {
+            flex: 1;
+            max-width: 640px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2px 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-area:focus-within {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--m3-primary);
+            box-shadow: 0 0 15px rgba(208, 188, 255, 0.2);
         }
 
         input {
@@ -68,140 +68,177 @@
             background: transparent;
             border: none;
             color: white;
-            padding: 10px;
+            padding: 10px 16px;
             font-size: 16px;
             outline: none;
         }
 
-        button {
-            background: var(--primary);
+        .btn-search {
+            background: var(--m3-primary);
             color: #381e72;
             border: none;
-            padding: 8px 20px;
+            padding: 0 24px;
             border-radius: 20px;
             font-weight: 600;
             cursor: pointer;
-            margin-left: 8px;
             transition: 0.2s;
         }
 
-        button:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-search:hover { transform: scale(1.03); opacity: 0.9; }
 
-        /* Сетка видео */
-        .grid {
+        /* Grid & Cards */
+        .main-content {
+            padding: 32px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 24px;
-            width: 95%;
-            max-width: 1400px;
-            padding: 32px 0;
         }
 
-        /* Карточка в стиле Material 3 */
         .v-card {
-            background: #232a31;
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 16px;
             overflow: hidden;
-            transition: 0.3s cubic-bezier(0.2, 0, 0, 1);
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .v-card.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .v-card:hover {
-            transform: translateY(-4px);
-            background: #2c343d;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+            transform: scale(1.04);
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         iframe {
             width: 100%;
             aspect-ratio: 16/9;
             border: none;
+            pointer-events: auto;
         }
 
-        .v-info { padding: 16px; }
+        .v-meta { padding: 16px; }
 
         .v-title {
             font-size: 15px;
-            font-weight: 500;
-            line-height: 1.4;
-            margin-bottom: 8px;
+            font-weight: 600;
+            margin-bottom: 6px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        #status {
-            color: var(--error);
-            margin: 20px;
-            padding: 12px 24px;
-            background: rgba(255, 180, 171, 0.1);
-            border-radius: 8px;
-            display: none;
+        /* Animations */
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Skeleton loader */
+        .skeleton {
+            background: linear-gradient(90deg, #222 25%, #333 50%, #222 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 12px;
+            height: 180px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">Atube</div>
-    <div class="search-container">
-        <input type="text" id="sInp" placeholder="Поиск на Atube...">
-        <button onclick="runSearch()">Найти</button>
+    <div class="logo" onclick="location.reload()">Atube</div>
+    <div class="search-area">
+        <input type="text" id="searchInput" placeholder="Поиск видео по всему миру...">
+        <button class="btn-search" onclick="doSearch()">Найти</button>
     </div>
 </header>
 
-<div id="status"></div>
-
-<div class="grid" id="mainGrid"></div>
+<div class="main-content" id="videoGrid">
+    <div class="v-card show"><div class="skeleton"></div></div>
+    <div class="v-card show"><div class="skeleton"></div></div>
+    <div class="v-card show"><div class="skeleton"></div></div>
+</div>
 
 <script>
-    // Твой проверенный ключ
-    const KEY = 'AIzaSyDTPvbauyBlCMg0F_9JPEWsMxtQwnxOBSw';
+    // Твой официальный ключ из консоли (без лишних знаков)
+    const ATUBE_KEY = 'AIzaSyDTPvbauyBlCMg0F_9JPEWsMxtQwnxOBSw'; 
 
-    async function callApi(params) {
-        const url = `https://www.googleapis.com/youtube/v3/${params}&key=${KEY}`;
+    async function apiRequest(endpoint) {
+        // Используем твой ключ напрямую в строке
+        const url = `https://www.googleapis.com/youtube/v3/${endpoint}&key=${ATUBE_KEY}`;
         try {
-            const r = await fetch(url);
-            const d = await r.json();
-            if (d.error) {
-                document.getElementById('status').innerText = "Ошибка: " + d.error.message;
-                document.getElementById('status').style.display = 'block';
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.error) {
+                console.error("YouTube API Error:", data.error.message);
+                alert("Ошибка ключа: " + data.error.message);
                 return null;
             }
-            return d.items;
+            return data.items;
         } catch (e) {
+            console.error("Network error");
             return null;
         }
     }
 
+    async function doSearch() {
+        const query = document.getElementById('searchInput').value;
+        if (!query) return;
+
+        // encodeURIComponent предотвращает ошибки при вводе кириллицы или спецсимволов
+        const encodedQuery = encodeURIComponent(query);
+        const results = await apiRequest(`search?part=snippet&maxResults=15&q=${encodedQuery}&type=video`);
+        if (results) render(results);
+    }
+
     async function loadTrends() {
-        const items = await callApi('videos?part=snippet&chart=mostPopular&regionCode=RU&maxResults=12');
-        if (items) draw(items);
+        // Тренды региона Украина (UA)
+        const trends = await apiRequest(`videos?part=snippet&chart=mostPopular&regionCode=UA&maxResults=15`);
+        if (trends) render(trends);
     }
 
-    async function runSearch() {
-        const q = document.getElementById('sInp').value;
-        if (!q) return;
-        const items = await callApi(`search?part=snippet&q=${encodeURIComponent(q)}&type=video&maxResults=12`);
-        if (items) draw(items);
-    }
+    function render(items) {
+        const grid = document.getElementById('videoGrid');
+        grid.innerHTML = '';
+        
+        items.forEach((item, index) => {
+            const id = item.id.videoId || item.id;
+            const card = document.createElement('div');
+            card.className = 'v-card';
+            
+            // Плавная задержка появления для каждой карточки
+            setTimeout(() => card.classList.add('show'), index * 100);
 
-    function draw(items) {
-        const g = document.getElementById('mainGrid');
-        g.innerHTML = '';
-        items.forEach(i => {
-            const id = i.id.videoId || i.id;
-            g.innerHTML += `
-                <div class="v-card">
-                    <iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>
-                    <div class="v-info">
-                        <div class="v-title">${i.snippet.title}</div>
-                    </div>
-                </div>`;
+            card.innerHTML = `
+                <iframe src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>
+                <div class="v-meta">
+                    <div class="v-title">${item.snippet.title}</div>
+                    <div style="font-size: 12px; color: #aaa;">${item.snippet.channelTitle}</div>
+                </div>
+            `;
+            grid.appendChild(card);
         });
     }
 
+    // Слушатель клавиши Enter
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') doSearch();
+    });
+
+    // Старт приложения
     loadTrends();
 </script>
 
